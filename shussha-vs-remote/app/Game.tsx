@@ -535,7 +535,9 @@ export default function Game() {
               <p className="lead">
                 {result.winner === null
                   ? "引き分け"
-                  : `${TEAM_INFO[result.winner].name}チームの勝利！`}
+                  : result.winner === result.playerTeam
+                    ? "勝利！"
+                    : "敗北…"}
               </p>
               <p className="result-score">
                 出社 {result.officePct}% : {result.remotePct}% リモート
