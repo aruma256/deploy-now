@@ -1,0 +1,5 @@
+node_modules/
+.next/
+.lolipop/
+next-env.d.ts
+*.tsbuildinfo
