@@ -1,0 +1,1 @@
+{"name":"tsumitate-simulator","private":true,"type":"module","scripts":{"dev":"node server.mjs","test":"node --test"}}

@@ -1,0 +1,11 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {defaults,simulate,valid} from './site/simulation.js';
+const near=(a,b)=>assert.ok(Math.abs(a-b)<1e-7,`${a} != ${b}`);
+test('zero rates preserve deposits and sum monthly contributions',()=>{const last=simulate({...defaults,rate:0,cost:0,depositRate:0}).at(-1);near(last.total,3900);near(last.total,last.principal);});
+test('annual effective interest and month-end deposits',()=>{const last=simulate({...defaults,years:1,initial:100,monthly:2,rate:12,cost:2,deposit:200,depositRate:2}).at(-1);const m=1.1**(1/12)-1;near(last.investment,110+2*((1+m)**12-1)/m);near(last.deposit,204);});
+test('loss-producing inputs are rejected',()=>{for(const s of [{...defaults,rate:-1},{...defaults,rate:0},{...defaults,cost:6}]){assert.equal(valid(s),false);assert.throws(()=>simulate(s));}});
+test('cost matching rate yields zero investment growth',()=>{near(simulate({...defaults,rate:5,cost:5}).at(-1).investment,3400);});
+test('invalid stored values are rejected; limits remain finite',()=>{assert.equal(valid({...defaults,years:1.5}),false);assert.equal(valid({...defaults,rate:NaN}),false);assert.equal(valid({...defaults,rate:5.01}),false);assert.equal(valid(null),null);assert.ok(Number.isFinite(simulate({...defaults,years:60,rate:50,initial:100000,monthly:1000}).at(-1).total));});
+test('five components reconcile to total for nonnegative returns',()=>{for(const rate of [5,0.1,20])for(const r of simulate({...defaults,rate})){near(r.initial+r.contributions+r.investmentGain+r.depositPrincipal+r.depositGain,r.total);}});
+test('precise annual cost is retained',()=>{assert.equal(defaults.cost,0.05775);assert.ok(valid(defaults));near(simulate({...defaults,years:1,monthly:0}).at(-1).investment,1000*(1+(5-0.05775)/100));});
