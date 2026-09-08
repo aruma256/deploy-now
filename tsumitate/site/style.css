@@ -3,3 +3,5 @@
 .total{flex-wrap:wrap}.total>span{max-width:100%;overflow-wrap:anywhere}.stats strong{overflow-wrap:anywhere}
 
 #cost{appearance:textfield;-moz-appearance:textfield;padding-right:76px}#cost::-webkit-inner-spin-button,#cost::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}.input-wrap:has(#cost) .unit{right:46px}.cost-stepper{position:absolute;right:1px;top:1px;bottom:1px;display:flex;flex-direction:column;width:32px;border-left:1px solid #d6dfd7}.cost-stepper button{flex:1;border:0;background:transparent;color:#526e61;cursor:pointer;font-size:13px;line-height:1;border-radius:5px}.cost-stepper button:hover{background:#e6eee7}.cost-stepper button:focus-visible{outline:2px solid #31866d}
+
+#copy-settings{margin-top:18px}#copy-text{width:100%;font:inherit;font-size:13px;line-height:1.7;padding:12px;border:1px solid #d6dfd7;border-radius:8px;resize:vertical}

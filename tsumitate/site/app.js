@@ -49,3 +49,43 @@ $('cost-down').addEventListener('click',()=>stepCost(-1));
 $('cost').addEventListener('keydown',event=>{
 if(event.key==='ArrowUp'||event.key==='ArrowDown'){event.preventDefault();stepCost(event.key==='ArrowUp'?1:-1);}
 });
+
+function conditionsText(s){
+const last=simulate(s).at(-1);
+return `積立・預金シミュレーションの条件
+- 運用期間：${s.years}年
+- 初期投資額：${s.initial.toLocaleString('ja-JP')}万円
+- 毎月の投資額：${s.monthly.toLocaleString('ja-JP')}万円
+- 運用利回り（年率）：${s.rate}%
+- 年間コスト率（信託報酬など）：${s.cost}%
+- コスト差引後の実質年利：${Number((s.rate-s.cost).toFixed(5))}%
+- 開始時の預金額：${s.deposit.toLocaleString('ja-JP')}万円
+- 預金金利（年率）：${s.depositRate}%
+
+${s.years}年後のシミュレーション結果（税引前、金額は万円・小数1桁に丸め）
+- 総資産：${fmt(last.total)}万円
+- 積立投資の評価額：${fmt(last.investment)}万円
+- 預金残高：${fmt(last.deposit)}万円
+
+- 入金元本合計：${fmt(last.principal)}万円
+- 運用損益合計：${fmt(last.total-last.principal)}万円
+- コストによる資産差：${fmt(last.gross-last.total)}万円（コストなしの場合との差。複利への影響を含み、実際の手数料合計ではない）
+
+計算の前提
+- 投資の実質年利＝運用利回り−年間コスト率。
+- 実効月利＝(1＋年率÷100)^(1÷12)−1。月次複利で、毎月末に積立を追加。
+- 預金は開始時から別枠で複利運用。初期投資・積立資金は預金から取り崩さない。
+- 利回りは期間中一定。税金・インフレ・価格変動・個別の売買手数料は考慮しない。`;
+}
+$('copy-settings').addEventListener('click',async()=>{
+const current=Object.fromEntries(Object.keys(defaults).map(k=>[k,Number($(k).value)]));
+if(!Object.keys(defaults).every(k=>$(k).validity.valid)||!valid(current)){
+$('copy-status').textContent='入力値を修正してからコピーしてください。';return;
+}
+const text=conditionsText(current);
+try{await navigator.clipboard.writeText(text);$('copy-status').textContent='コピーしました。他のAIとの会話に貼り付けられます。';$('copy-fallback').hidden=true;}
+catch{$('copy-text').value=text;$('copy-fallback').hidden=false;$('copy-text').focus();$('copy-text').select();$('copy-status').textContent='自動コピーできませんでした。下のテキストを選択してコピーしてください。';}
+});
+function clearCopy(){ $('copy-status').textContent='';$('copy-fallback').hidden=true; }
+$('settings').addEventListener('input',clearCopy);
+$('reset').addEventListener('click',clearCopy);
